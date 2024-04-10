@@ -1,0 +1,203 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Targeting Breakdown <span style="font-size: 12px;">(Please select Campaign first)</span></h3>
+      </div>
+      <div class="col-4">
+        <!-- <p></p> -->
+        <p>Campaign (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #campaign id="mat-select-targeting-breakdown-campaign" [formControl]="targeting_breakdown_campaigns" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <mat-select-filter *ngIf="campaign.focused" [array]="campaignListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="campaignList=$event"></mat-select-filter>
+            <!-- <mat-option>(None)</mat-option> -->
+            <mat-option *ngFor="let campaign of campaignListForSearch" [value]="campaign.value" [class.hide]="!isFilteredCampaigns(campaign)">{{campaign.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- <div class="col-4"> -->
+        <!-- <p>&nbsp;</p> -->
+        <!-- <p>Goal (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #goal id="mat-select-targeting-breakdown-goal" [formControl]="targeting_breakdown_goals" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let goal of goalList" [value]="goal.value">{{goal.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div> -->
+      <div class="col-4">
+        <button class="clear" mat-icon-button color="link" (click)="clearTargetingBreakdownStorage()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <!-- <p>&nbsp;</p> -->
+        <p>Channel (Optional)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #channel id="mat-select-targeting-breakdown-channel" [formControl]="targeting_breakdown_channels" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <!-- <mat-select-filter *ngIf="channel.focused" [array]="channelListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="channelList=$event"></mat-select-filter> -->
+            <mat-option *ngFor="let channel of channelList" [value]="channel">{{channel}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- <mat-form-field appearance="outline">
+          <mat-select #channel id="mat-select-targeting-breakdown-channel" [formControl]="targeting_breakdown_channels" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-select-filter *ngIf="channel.focused" [array]="channelListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="channelList=$event"></mat-select-filter>
+            <mat-option *ngFor="let channel of channelList" [value]="channel.value">{{channel.text}}</mat-option>
+          </mat-select>
+        </mat-form-field> -->
+      </div>
+      <div class="col-12" style="margin-bottom: 10px;">
+        <span>Campaign Dates:
+          <span *ngIf="!campaignStartDate && !campaignEndDate && !campaignDate" style="font-size:12px;">(Select Campaign)</span>
+          <span *ngIf="!campaignStartDate && !campaignEndDate && campaignDate" style="font-size:12px;">(No dates available)</span>
+          <span *ngIf="campaignStartDate && campaignEndDate && campaignDate" style="font-weight:bold;">({{campaignStartDate}} - {{campaignEndDate}})</span>
+        </span>
+      </div>
+      <div class="col-6">
+        <p>Targeting</p>
+        <mat-form-field appearance="outline">
+          <mat-select #targeting id="mat-select-targeting-breakdown-targeting" [formControl]="targeting_breakdown_targetings" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-select-filter *ngIf="targeting.focused" [array]="targetingListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="targetingList=$event"></mat-select-filter>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let targeting of targetingList" [value]="targeting.value">{{targeting.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-6">
+        <p>Audiences</p>
+        <mat-form-field appearance="outline">
+          <mat-select #audience id="mat-select-targeting-breakdown-audience" [formControl]="targeting_breakdown_audiences" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-select-filter *ngIf="audience.focused" [array]="audienceListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="audienceList=$event"></mat-select-filter>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let audience of audienceList" [value]="audience.value">{{audience.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="row widget-wrapper-sl-scroll widget-scroll" style="margin-bottom: 20px;">
+      <div class="col-6">
+        <div class="widget-wrapper widget-360">
+          <span class="widget-tooltip" mat-raised-button matTooltip="CPM"></span>
+          <h4 class="widget-title">CPM</h4>
+          <!-- <app-bar-chart [widgetData]="targetingBreakdownCpmData.chart" widgetId="targeting-overview-targeting-breakdown-cpm" [classes]=targetingBreakdownCpmClasses></app-bar-chart> -->
+          <app-bar-chart *ngIf="targetingBreakdownCpmData.chart.length==0" [widgetData]="[]" widgetId="targeting-overview-targeting-breakdown-cpm-nil" [classes]=targetingBreakdownCpmClasses></app-bar-chart>
+          <mdb-carousel *ngIf="targetingBreakdownCpmData.chart.length" class="carousel-custom-control carousel-custom-indicator targeting-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of targetingBreakdownCpmData.chart; index as i">
+              <app-bar-chart widgetType="$" widgetCategory="targetingBreakdown" [widgetData]="item" widgetId="targeting-overview-targeting-breakdown-cpm-{{targetingBreakdownCpmData.chartIds[i]}}" class="widget-280-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="widget-wrapper widget-360">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Viewability"></span>
+          <h4 class="widget-title">Viewability</h4>
+          <!-- <app-bar-chart [widgetData]="targetingBreakdownViewabilityData.chart" widgetId="targeting-breakdown-viewability" [classes]=targetingBreakdownViewabilityClasses></app-bar-chart> -->
+          <app-bar-chart *ngIf="targetingBreakdownViewabilityData.chart.length==0" [widgetData]="[]" widgetId="targeting-overview-targeting-breakdown-viewability-nil" [classes]=targetingBreakdownViewabilityClasses></app-bar-chart>
+          <mdb-carousel *ngIf="targetingBreakdownViewabilityData.chart.length" class="carousel-custom-control carousel-custom-indicator targeting-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of targetingBreakdownViewabilityData.chart; index as i">
+              <app-bar-chart [widgetType]="targetingBreakdownViewabilityData.details[i].unit" widgetCategory="targetingBreakdown" [widgetSubCategory]="targetingBreakdownViewabilityData.details[i].name" [widgetData]="item" widgetId="targeting-overview-targeting-breakdown-viewability-{{targetingBreakdownViewabilityData.chartIds[i]}}" class="widget-280-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="row" style="margin-bottom: 20px;">
+      <div class="col-6">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="SL"></span>
+          <h4 class="widget-title">SL</h4>
+          <mdb-carousel *ngIf="targetingBreakdownSlData.chart.length" class="carousel-custom-control carousel-custom-indicator targeting-sl-bl-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of targetingBreakdownSlData.chart; index as i">
+              <span style="font-weight: bold;text-align: center;">{{(i%2==0)?'Brand SL  by Targeting':'Product SL  by Targeting'}}</span>
+              <div class="d-flex justify-content-center" style="position: absolute;right: 0;">
+                <span class="d-flex justify-content-around" style="width: 60%;">
+                  <span style="width: 120px;">ROAS: </span>
+                  <span *ngIf="(i%2==0)" class="badge bg-secondary" style="min-width: 45px;width: 100%;line-height: 18px;font-weight: 900;">{{this.targetingBreakdownSlData.roas[0].brandRoas?'$'+this.targetingBreakdownSlData.roas[0].brandRoas:'N/A'}}</span>
+                  <span *ngIf="(i%2!=0)" class="badge bg-secondary" style="min-width: 45px;width: 100%;line-height: 18px;font-weight: 900;">{{this.targetingBreakdownSlData.roas[0].productRoas?'$'+this.targetingBreakdownSlData.roas[0].productRoas:'N/A'}}</span>
+                </span>
+              </div>
+              <mat-list [ngClass]=targetingBreakdownSlClasses class="widget-320-scroll widget-scroll">
+                <mat-list-item *ngFor="let Sl of item">
+                  <div class="{{Sl.isSignificant?'bg-info':''}}" style="min-width: 70%;text-align: center;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{Sl.type}}</div>
+                  <div class="{{Sl.isSignificant?'bg-info':''}}" style="min-width: 30%;text-align: left;">{{Sl.sl}}%</div>
+                </mat-list-item>
+              </mat-list>
+            </mdb-carousel-item>
+          </mdb-carousel>
+          <mdb-carousel *ngIf="targetingBreakdownSlData.chart.length==0">
+            <mdb-carousel-item>
+              <span [ngClass]=targetingBreakdownSlClasses class="d-flex flex-column justify-content-center align-items-center">Data Not Available</span>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="BL"></span>
+          <h4 class="widget-title">BL</h4>
+          <mdb-carousel *ngIf="targetingBreakdownBlData.chart.length" class="carousel-custom-control carousel-custom-indicator targeting-sl-bl-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of targetingBreakdownBlData.chart; index as i">
+              <span style="font-weight: bold;text-align: center;">{{(i%2==0)?'Comscore BL by Targeting':'YouTube BL by Targeting'}}</span>
+              <mat-list  [ngClass]=targetingBreakdownBlClasses class="widget-320-scroll widget-scroll">
+                <mat-list-item *ngFor="let Bl of item">
+                  <div class="{{Bl.isSignificant?'bg-info':''}}" style="min-width: 70%;text-align: center;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">{{Bl.type}}</div>
+                  <div class="{{Bl.isSignificant?'bg-info':''}}" style="min-width: 30%;text-align: left;">{{Bl.bl}}%</div>
+                </mat-list-item>
+              </mat-list>
+            </mdb-carousel-item>
+          </mdb-carousel>
+          <mdb-carousel *ngIf="targetingBreakdownBlData.chart.length==0">
+            <mdb-carousel-item>
+              <span [ngClass]=targetingBreakdownBlClasses class="d-flex flex-column justify-content-center align-items-center">Data Not Available</span>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+    </div> -->
+    <!-- <div class="row" style="margin-bottom: 20px;">
+      <div class="col-12">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Creative image score"></span>
+          <h4 class="widget-title">Creative Image Score</h4>
+          <mdb-carousel id="carousel-3" [animation]="'slide'" [allowSwipe]=true [interval]=0 [isControls]=true>
+            <mdb-carousel-item *ngFor="let creative of targetingBreakdownCreativeImageScoreData.creativeImages">
+              <mat-card-header>
+                <mat-card-title>{{creative.name}}</mat-card-title>
+              </mat-card-header>
+              <img mat-card-image src="{{creative.image}}" alt="{{creative.name}}">
+              <mat-card-footer>
+                <div class="d-flex justify-content-center">
+                  <span class="d-flex justify-content-around" style="width: 20%;margin-bottom: 5px;">
+                    <span style="width: 120px;">Creative Score: </span>
+                    <span class="badge bg-secondary">{{creative.creativeScore}}</span>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <span class="d-flex justify-content-around" style="width: 20%;margin-bottom: 5px;">
+                    <span style="width: 120px;">In View Time: </span>
+                    <span class="badge bg-secondary">{{creative.inViewTime}}</span>
+                  </span>
+                </div>
+                <div class="d-flex justify-content-center">
+                  <span class="d-flex justify-content-around" style="width: 20%;margin-bottom: 5px;">
+                    <span style="width: 120px;">In View Rate: </span>
+                    <span class="badge bg-secondary">{{creative.inViewRate}}</span>
+                </span>
+                </div>
+              </mat-card-footer>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+    </div> -->
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>

@@ -1,0 +1,332 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Campaign Summary <span style="font-size: 12px;">(Please select Campaign first)</span></h3>
+      </div>
+      <div class="col-4">
+        <!-- <p></p> -->
+        <p>Campaign (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #campaign id="mat-select-campaign-summary-campaign" [formControl]="campaign_summary_campaigns" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <mat-select-filter *ngIf="campaign.focused" [array]="campaignListForSearch" [displayMember]="'value'" (filteredReturn)="campaignList=$event"></mat-select-filter>
+            <!-- <mat-option>(None)</mat-option> -->
+            <mat-option *ngFor="let campaign of campaignListForSearch" [value]="campaign.value" [class.hide]="!isFilteredCampaigns(campaign)">{{campaign.value}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <!-- <div class="col-4"> -->
+        <!-- <p>&nbsp;</p> -->
+        <!-- <p>Goal (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #goal id="mat-select-campaign-summary-goal" [formControl]="campaign_summary_goals" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let goal of goalList" [value]="goal.value">{{goal.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div> -->
+      <div class="col-4">
+        <button class="clear" mat-icon-button color="link" (click)="clearCampaignSummaryStorage()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <!-- <p>&nbsp;</p> -->
+        <p>Channel (Optional)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #channel id="mat-select-campaign-summary-channel" [formControl]="campaign_summary_channels" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-select-filter *ngIf="channel.focused" [array]="channelListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="channelList=$event"></mat-select-filter>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let channel of channelList" [value]="channel.value">{{channel.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12" style="margin-bottom: 10px;">
+        <span>Campaign Dates:
+          <span *ngIf="!campaignStartDate && !campaignEndDate && !campaignDate" style="font-size:12px;">(Select Campaign)</span>
+          <span *ngIf="!campaignStartDate && !campaignEndDate && campaignDate" style="font-size:12px;">(No dates available)</span>
+          <span *ngIf="campaignStartDate && campaignEndDate && campaignDate" style="font-weight:bold;">({{campaignStartDate}} - {{campaignEndDate}})</span>
+        </span>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-3">
+        <div class="widget-wrapper">
+          <!-- <mdb-carousel id="carousel-1" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item> -->
+            <span class="widget-tooltip" mat-raised-button matTooltip="Impressions"></span>
+            <h4 class="widget-title" style="min-height: 58px;">Online Impressions</h4>
+            <mdb-carousel #impressionCarousel class="carousel-custom-control carousel-custom-indicator overview-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+              <mdb-carousel-item>
+                <span class="widget-value" *ngIf="campaignSummaryImpressionsData.value;else zero">{{campaignSummaryImpressionsData.value | shortNumber}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart [widgetData]="campaignSummaryImpressionsData.chart" widgetId="campaign-summary-impressions" [classes]=campaignSummaryImpressionsClasses></app-line-chart>
+              </mdb-carousel-item>
+              <mdb-carousel-item>
+                <app-bar-chart *ngIf="campaignSummaryImpressionDataByTargeting.chart.length==0" [widgetData]="[]" widgetId="overview-impression-targeting-breakdown-nil" [classes]=campaignSummaryOverviewTargetingClasses></app-bar-chart>
+                <app-bar-chart *ngIf="campaignSummaryImpressionDataByTargeting.chart.length" widgetType="" widgetCategory="overviewTargetingBreakdown" [widgetData]="campaignSummaryImpressionDataByTargeting.chart" widgetId="overview-impression-targeting-breakdown" class="widget-233-scroll widget-scroll"></app-bar-chart>
+              </mdb-carousel-item>
+            </mdb-carousel>
+              <!-- <span class="widget-divider"></span>
+              <span class="widget-goal">&nbsp;</span>
+              <ng-template #zeroGoal>
+                <span class="widget-goal">Goal: 0</span>
+              </ng-template> -->
+            <!-- </mdb-carousel-item>
+            <mdb-carousel-item>
+              <span class="widget-tooltip" mat-raised-button matTooltip="Reach (TV)"></span>
+              <h4 class="widget-title">Reach (TV)</h4>
+              <span class="widget-value" *ngIf="campaignSummaryReachData.value;else zero">{{campaignSummaryReachData.value | shortNumber}}</span>
+              <app-line-chart [widgetData]="campaignSummaryReachData.chart" widgetId="campaign-summary-reach" [classes]=campaignSummaryReachClasses></app-line-chart>
+              <span class="widget-divider"></span>
+              <span class="widget-goal" *ngIf="campaignSummaryReachData.goal;else zeroGoal">Goal: {{campaignSummaryReachData.goal | shortNumber}}</span>
+            </mdb-carousel-item>
+          </mdb-carousel> -->
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Spend"></span>
+          <h4 class="widget-title" style="min-height: 58px;">Online Spend</h4>
+          <mdb-carousel #spendCarousel class="carousel-custom-control carousel-custom-indicator overview-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item>
+              <span class="widget-value" *ngIf="campaignSummarySpendData.value;else zero">${{campaignSummarySpendData.value | shortNumber}}</span>
+              <app-line-chart [widgetData]="campaignSummarySpendData.chart" widgetId="campaign-summary-spend" [classes]=campaignSummarySpendClasses></app-line-chart>
+              <!-- <span class="widget-divider"></span>
+              <span class="widget-goal" *ngIf="campaignSummarySpendData.goal;else zeroGoal">Goal: ${{campaignSummarySpendData.goal | shortNumber}}</span> -->
+            </mdb-carousel-item>
+            <mdb-carousel-item>
+              <app-bar-chart *ngIf="campaignSummarySpendDataByTargeting.chart.length==0" [widgetData]="[]" widgetId="overview-spend-targeting-breakdown-nil" [classes]=campaignSummaryOverviewTargetingClasses></app-bar-chart>
+              <app-bar-chart *ngIf="campaignSummarySpendDataByTargeting.chart.length" widgetType="$" widgetCategory="overviewTargetingBreakdown" [widgetData]="campaignSummarySpendDataByTargeting.chart" widgetId="overview-spend-targeting-breakdown" class="widget-233-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="CPM"></span>
+          <h4 class="widget-title" style="min-height: 58px;">Online CPM</h4>
+          <mdb-carousel #cpmCarousel class="carousel-custom-control carousel-custom-indicator overview-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item>
+              <span class="widget-value" *ngIf="campaignSummaryCpmData.value;else zero">${{campaignSummaryCpmData.value | shortNumber}}</span>
+              <app-line-chart [widgetData]="campaignSummaryCpmData.chart" widgetId="campaign-summary-cpm" [classes]=campaignSummaryCpmClasses></app-line-chart>
+              <!-- <span class="widget-divider"></span>
+              <span class="widget-goal" *ngIf="campaignSummaryCpmData.goal;else zeroGoal">Goal: ${{campaignSummaryCpmData.goal | shortNumber}}</span> -->
+            </mdb-carousel-item>
+            <mdb-carousel-item>
+              <app-bar-chart *ngIf="campaignSummaryCPMDataByTargeting.chart.length==0" [widgetData]="[]" widgetId="overview-cpm-targeting-breakdown-nil" [classes]=campaignSummaryOverviewTargetingClasses></app-bar-chart>
+              <app-bar-chart *ngIf="campaignSummaryCPMDataByTargeting.chart.length" widgetType="$" widgetCategory="overviewTargetingBreakdown" [widgetData]="campaignSummaryCPMDataByTargeting.chart" widgetId="overview-cpm-targeting-breakdown" class="widget-233-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Digital Creative Quality Score"></span>
+          <h4 class="widget-title" style="min-height: 58px;">Digital Creative Quality Score</h4>
+          <div [ngClass]=campaignSummaryCreativeScoreClasses>
+            <app-progress-circle-chart *ngIf="campaignSummaryCreativeScoreData.chart.length;else donutChartNil" widgetCategory="digitalCreativeScoreDonut" widgetId="campaign-summary-digital-creative-score-donut" [widgetData]="campaignSummaryCreativeScoreData.chart" [creativeScore]=campaignSummaryCreativeScoreData.value></app-progress-circle-chart>
+            <ng-template #donutChartNil>
+              <span class="widget-value" style="height: 100px;">0</span>
+            </ng-template>
+            <!-- <span class="widget-value">{{campaignSummaryCreativeScoreData.value?(campaignSummaryCreativeScoreData.value | shortNumber):0}}</span> -->
+            <span>Platforms: {{campaignSummaryCreativeScoreData.channels?(campaignSummaryCreativeScoreData.channels | shortNumber):0}}</span>
+            <span>Creatives: {{campaignSummaryCreativeScoreData.creatives?(campaignSummaryCreativeScoreData.creatives | shortNumber):0}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-6">
+      <!-- <div class="col-6" [ngClass]="campaign_summary_goals.value=='grow-HH-penetration'||campaign_summary_goals.value=='build-usage-occasions'||campaign_summary_goals.value=='drive-shopper-action'?'disabled opacity-50':''"> -->
+        <div class="widget-wrapper widget-scroll widget-434-scroll">
+          <mdb-carousel #carousel id="carousel-2" class="carousel-custom carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item class="widget-360">
+            <!-- <div class="widget-360"> -->
+              <span class="widget-tooltip" mat-raised-button matTooltip="Brand Lift"></span>
+              <h4 class="widget-title">Brand Lift</h4>
+              <div class="table-wrapper">
+                <div class="table-wrap">
+                  <table class="table table-bordered table-dark">
+                    <tbody>
+                      <tr>
+                        <td>Comscore PL</td>
+                        <td *ngIf="campaignSummaryComScoreBrandLiftData.flag;else data">Data Available</td>
+                        <ng-template #data>
+                          <td>Data Not Available</td>
+                        </ng-template>
+                      </tr>
+                      <tr>
+                        <td>Facebook BL</td>
+                        <td *ngIf="campaignSummaryFacebookBrandLiftData.flag;else data">Data Available</td>
+                        <ng-template #data>
+                          <td>Data Not Available</td>
+                        </ng-template>
+                      </tr>
+                      <tr>
+                        <td>YouTube AL</td>
+                        <td *ngIf="campaignSummaryYouTubeBrandLiftData.flag;else data">Data Available</td>
+                        <ng-template #data>
+                          <td>Data Not Available</td>
+                        </ng-template>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            <!-- </div> -->
+            <!-- <span class="widget-divider widget-divider-padding"></span> -->
+            </mdb-carousel-item>
+            <mdb-carousel-item>
+            <!-- <div> -->
+              <span class="widget-tooltip" mat-raised-button matTooltip="Comscore Brand Lift"></span>
+              <h4 class="widget-title">Comscore Brand Lift</h4>
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6">
+                    <!-- <p>Creative Name</p> -->
+                    <mat-form-field appearance="outline">
+                      <mat-select #creativeName id="mat-select-campaign-summary-creative-name" [formControl]="campaign_summary_creative_names" (selectionChange)="onChange($event)" placeholder="Select Creative Name" disableOptionCentering>
+                        <mat-select-filter *ngIf="creativeName.focused" [array]="creativeNameListForSearch" [displayMember]="'value'" (filteredReturn)="creativeNameList=$event"></mat-select-filter>
+                        <mat-option *ngFor="let creative of creativeNameList" [value]="creative.value">{{creative.text}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <button class="clear" mat-icon-button color="link" (click)="clearComscoreFilter()">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <app-bar-chart widgetType="%" widgetCategory="brandLift" widgetNoData="Please select Creative Name" [widgetData]="campaignSummaryComScoreBrandLiftData.chart" widgetId="campaign-summary-comscore-brand-lift" [classes]=campaignSummaryBrandLiftComscoreClasses></app-bar-chart>
+            <!-- </div> -->
+            <!-- <span class="widget-divider widget-divider-padding"></span> -->
+            </mdb-carousel-item>
+            <mdb-carousel-item>
+            <!-- <div> -->
+              <span class="widget-tooltip" mat-raised-button matTooltip="Facebook Brand Lift"></span>
+              <h4 class="widget-title">Facebook Brand Lift</h4>
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-5">
+                    <!-- <p>Study Name</p> -->
+                    <mat-form-field appearance="outline">
+                      <mat-select #studyName id="mat-select-campaign-summary-study-name" [formControl]="campaign_summary_study_names" (selectionChange)="onChange($event)" placeholder="Select Study Name" disableOptionCentering>
+                        <mat-select-filter *ngIf="studyName.focused" [array]="studyNameListForSearch" [displayMember]="'value'" (filteredReturn)="studyNameList=$event"></mat-select-filter>
+                        <mat-option *ngFor="let name of studyNameList" [value]="name.value">{{name.text}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-5">
+                    <!-- <p>Cell Name</p> -->
+                    <mat-form-field appearance="outline">
+                      <mat-select #cellName id="mat-select-campaign-summary-cell-name" [formControl]="campaign_summary_cell_names" (selectionChange)="onChange($event)" placeholder="Select Cell Name" disableOptionCentering>
+                        <mat-select-filter *ngIf="cellName.focused" [array]="cellNameListForSearch" [displayMember]="'value'" (filteredReturn)="cellNameList=$event"></mat-select-filter>
+                        <mat-option *ngFor="let name of cellNameList" [value]="name.value">{{name.text}}</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-2">
+                    <button class="clear" mat-icon-button color="link" (click)="clearFacebookFilter()">
+                      <mat-icon>clear</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <app-bar-chart widgetType="%" widgetCategory="brandLift" widgetNoData="Please select Study Name than Cell Name" [widgetData]="campaignSummaryFacebookBrandLiftData.chart" widgetId="campaign-summary-facebook-brand-lift" [classes]=campaignSummaryBrandLiftFacebookClasses></app-bar-chart>
+            <!-- </div> -->
+            <!-- <span class="widget-divider widget-divider-padding"></span> -->
+            </mdb-carousel-item>
+            <mdb-carousel-item>
+            <!-- <div> -->
+              <span class="widget-tooltip" mat-raised-button matTooltip="YouTube Brand Lift"></span>
+              <h4 class="widget-title">YouTube Brand Lift</h4>
+              <app-bar-chart widgetType="%" widgetCategory="brandLift" [widgetData]="campaignSummaryYouTubeBrandLiftData.chart" widgetId="campaign-summary-youtube-brand-lift" [classes]=campaignSummaryBrandLiftClasses></app-bar-chart>
+            <!-- </div> -->
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-3">
+      <!-- <div class="col-3" [ngClass]="campaign_summary_goals.value=='grow-brand-awareness'||campaign_summary_goals.value=='brand-affinity'||campaign_summary_goals.value=='brand-preference'?'disabled opacity-50':''"> -->
+        <!-- <div class="widget-wrapper">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Social Sentiment"></span>
+          <h4 class="widget-title">Social Sentiment</h4>
+          <app-bar-chart *ngIf="campaignSummarySocialSentimentData.chart.length==0" [widgetData]="[]" widgetId="campaign-summary-social-sentiment-nil" [classes]=campaignSummarySocialSentimentClasses></app-bar-chart>
+          <app-bar-chart *ngIf="campaignSummarySocialSentimentData.chart.length" widgetType="%" widgetCategory="social" [widgetData]="campaignSummarySocialSentimentData.chart" widgetId="campaign-summary-social-sentiment-{{campaignSummarySocialSentimentData.chartIds[0]}}" [classes]=campaignSummarySocialSentimentClasses></app-bar-chart>
+          <div class="d-flex justify-content-center">
+            <span class="d-flex justify-content-around" style="width: 60%;">
+              <span style="width: 120px;">Share Of Voice: </span>
+              <span class="badge bg-secondary" style="min-width: 45px;line-height: 18px;font-weight: 900;">{{campaignSummarySocialSentimentData.shareOfVoice?campaignSummarySocialSentimentData.shareOfVoice+'%':'N/A'}}</span>
+            </span>
+          </div>
+        </div> -->
+        <div class="widget-wrapper widget-434">
+          <span class="widget-tooltip" mat-raised-button matTooltip="Trademark Sales Lift"></span>
+          <h4 class="widget-title">Trademark Sales Lift</h4>
+          <div class="d-flex flex-column justify-content-center" style="height: 330px;">
+            <app-bar-chart *ngIf="campaignSummaryBrandODCLiftData.chart.length==0" [widgetData]="[]" widgetId="campaign-summary-sales-lift-trademark-lift-nil" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+            <mdb-carousel *ngIf="campaignSummaryBrandODCLiftData.chart.length" id="carousel-sl-trademark" class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+              <mdb-carousel-item *ngFor="let item of campaignSummaryBrandODCLiftData.chart; index as i">
+                <app-bar-chart widgetType="%" widgetCategory="saleLift" [widgetData]="item" widgetId="campaign-summary-sales-lift-trademark-lift-{{campaignSummaryBrandODCLiftData.chartIds[i]}}" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+              </mdb-carousel-item>
+            </mdb-carousel>
+          </div>
+          <div class="d-flex justify-content-center">
+            <span class="d-flex justify-content-around" style="width: 60%;margin-bottom: 5px;">
+              <span style="width: 120px;">ROAS: </span>
+              <span class="badge bg-secondary" style="min-width: 45px;line-height: 18px;font-weight: 900;">{{this.campaignSummaryBrandODCLiftData.roas?'$'+this.campaignSummaryBrandODCLiftData.roas:'N/A'}}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+      <!-- <div class="col-3" [ngClass]="campaign_summary_goals.value=='grow-brand-awareness'||campaign_summary_goals.value=='brand-affinity'||campaign_summary_goals.value=='brand-preference'?'disabled opacity-50':''"> -->
+        <div class="widget-wrapper widget-434">
+          <!-- <span class="widget-tooltip" mat-raised-button matTooltip="Sales Lift"></span>
+          <h4 class="widget-title">Trademark Sales Lift</h4>
+          <app-bar-chart *ngIf="campaignSummaryBrandODCLiftData.chart.length==0" [widgetData]="[]" widgetId="campaign-summary-sales-lift-trademark-lift-nil" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+          <mdb-carousel *ngIf="campaignSummaryBrandODCLiftData.chart.length" id="carousel-sl-trademark" class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of campaignSummaryBrandODCLiftData.chart; index as i">
+              <app-bar-chart widgetType="%" widgetCategory="saleLift" [widgetData]="item" widgetId="campaign-summary-sales-lift-trademark-lift-{{campaignSummaryBrandODCLiftData.chartIds[i]}}" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+          <div class="d-flex justify-content-center">
+            <span class="d-flex justify-content-around" style="width: 60%;margin-bottom: 5px;">
+              <span style="width: 120px;">ROAS: </span>
+              <span class="badge bg-secondary" style="min-width: 45px;line-height: 18px;font-weight: 900;">{{this.campaignSummaryBrandODCLiftData.roas?'$'+this.campaignSummaryBrandODCLiftData.roas:'N/A'}}</span>
+            </span>
+          </div>
+          <span class="widget-divider"></span> -->
+          <span class="widget-tooltip" mat-raised-button matTooltip="Product Sales Lift"></span>
+          <h4 class="widget-title">Product Sales Lift</h4>
+          <div class="d-flex flex-column justify-content-center" style="height: 330px;">
+            <app-bar-chart *ngIf="campaignSummaryProductODCLiftData.chart.length==0" [widgetData]="[]" widgetId="campaign-summary-sales-lift-product-lift-nil" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+            <mdb-carousel *ngIf="campaignSummaryProductODCLiftData.chart.length" id="carousel-sl-product" class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+              <mdb-carousel-item *ngFor="let item of campaignSummaryProductODCLiftData.chart; index as i">
+                <app-bar-chart widgetType="%" widgetCategory="saleLift" [widgetData]="item" widgetId="campaign-summary-sales-lift-product-lift-{{campaignSummaryProductODCLiftData.chartIds[i]}}" [classes]=campaignSummarySalesLiftClasses></app-bar-chart>
+              </mdb-carousel-item>
+            </mdb-carousel>
+          </div>
+          <div class="d-flex justify-content-center">
+            <span class="d-flex justify-content-around" style="width: 60%;">
+              <span style="width: 120px;">ROAS: </span>
+              <span class="badge bg-secondary" style="min-width: 45px;line-height: 18px;font-weight: 900;">{{this.campaignSummaryProductODCLiftData.roas?'$'+this.campaignSummaryProductODCLiftData.roas:'N/A'}}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>

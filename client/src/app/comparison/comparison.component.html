@@ -1,0 +1,345 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Comparison</h3>
+      </div>
+      <div class="col-6">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <h6>Choose Campaign To Start Comparing</h6>
+            <p>Campaign 1</p>
+            <mat-form-field appearance="outline">
+              <mat-select #campaign1 id="mat-select-comparison-campaign-1" [formControl]="comparison_campaigns_1" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="campaign1.focused" [array]="campaign1ListForSearch" [displayMember]="'value'" (filteredReturn)="campaign1List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let campaign of campaign1List" [value]="campaign.value" [disabled]="campaign.value==comparison_campaigns_2.value">{{campaign.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-12" style="margin-bottom: 10px;padding: 0;">
+              <span>Campaign Dates:
+                <span *ngIf="!campaignStartDate1 && !campaignEndDate1 && !campaignDate1" style="font-size:12px;">(Select Campaign)</span>
+                <span *ngIf="!campaignStartDate1 && !campaignEndDate1 && campaignDate1" style="font-size:12px;">(No dates available)</span>
+                <span *ngIf="campaignStartDate1 && campaignEndDate1 && campaignDate1" style="font-weight:bold;">({{campaignStartDate1}} - {{campaignEndDate1}})</span>
+              </span>
+            </div>
+            <p>Targeting 1</p>
+            <mat-form-field appearance="outline">
+              <mat-select #targeting1 id="mat-select-comparison-targeting-1" [formControl]="comparison_targetings_1" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="targeting1.focused" [array]="targeting1ListForSearch" [displayMember]="'value'" (filteredReturn)="targeting1List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let targeting of targeting1List" [value]="targeting.value">{{targeting.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <p>Audience 1</p>
+            <mat-form-field appearance="outline">
+              <mat-select #audience1 id="mat-select-comparison-audience-1" [formControl]="comparison_audiences_1" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="audience1.focused" [array]="audience1ListForSearch" [displayMember]="'value'" (filteredReturn)="audience1List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let audience of audience1List" [value]="audience.value">{{audience.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <button class="clear" mat-icon-button color="link" (click)="clearComparisonStorage()">
+              <mat-icon>clear</mat-icon>
+            </button>
+            <h6>Choose Campaign To Start Comparing</h6>
+            <p>Campaign 2</p>
+            <mat-form-field appearance="outline">
+              <mat-select #campaign2 id="mat-select-comparison-campaign-2" [formControl]="comparison_campaigns_2" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="campaign2.focused" [array]="campaign2ListForSearch" [displayMember]="'value'" (filteredReturn)="campaign2List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let campaign of campaign2List" [value]="campaign.value" [disabled]="campaign.value==comparison_campaigns_1.value">{{campaign.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="col-12" style="margin-bottom: 10px;padding: 0;">
+              <span>Campaign Dates:
+                <span *ngIf="!campaignStartDate2 && !campaignEndDate2 && !campaignDate2" style="font-size:12px;">(Select Campaign)</span>
+                <span *ngIf="!campaignStartDate2 && !campaignEndDate2 && campaignDate2" style="font-size:12px;">(No dates available)</span>
+                <span *ngIf="campaignStartDate2 && campaignEndDate2 && campaignDate2" style="font-weight:bold;">({{campaignStartDate2}} - {{campaignEndDate2}})</span>
+              </span>
+            </div>
+            <p>Targeting 2</p>
+            <mat-form-field appearance="outline">
+              <mat-select #targeting2 id="mat-select-comparison-targeting-2" [formControl]="comparison_targetings_2" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="targeting2.focused" [array]="targeting2ListForSearch" [displayMember]="'value'" (filteredReturn)="targeting2List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let targeting of targeting2List" [value]="targeting.value">{{targeting.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <p>Audience 2</p>
+            <mat-form-field appearance="outline">
+              <mat-select #audience2 id="mat-select-comparison-audience-2" [formControl]="comparison_audiences_2" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                <mat-select-filter *ngIf="audience2.focused" [array]="audience2ListForSearch" [displayMember]="'value'" (filteredReturn)="audience2List=$event"></mat-select-filter>
+                <mat-option>(None)</mat-option>
+                <mat-option *ngFor="let audience of audience2List" [value]="audience.value">{{audience.text}}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 widget-wrapper-comparison-scroll widget-scroll">
+        <div class="row">
+          <div class="col-4">
+            <div *ngIf="comparison_campaigns_1.value">
+              <h4 style="text-align: center;min-height: 58px;">{{comparison_campaigns_1.value}}</h4>
+              <div class="widget-wrapper">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Impressions"></span>
+                <h4 class="widget-title">Online Impressions</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign1ImpressionsData.value;else zero">{{comparisonCampaign1ImpressionsData.value | shortNumber}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign1ImpressionsData.chart.length;else noData" widgetCategory="comparison" widgetColor="#67b7dc" [widgetData]="comparisonCampaign1ImpressionsData.chart" widgetId="comparison-campaign-1-impressions" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <div class="widget-wrapper" style="margin-top: 10px;">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Spend"></span>
+                <h4 class="widget-title">Online Spend</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign1SpendData.value;else zero">${{comparisonCampaign1SpendData.value | shortNumber}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign1SpendData.chart.length;else noData" widgetCategory="comparison" widgetColor="#67b7dc" [widgetData]="comparisonCampaign1SpendData.chart" widgetId="comparison-campaign-1-spend" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <ng-template #noData>
+                <div [ngClass]=comparisonClasses style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                  <span>Data Not Available</span>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-4">
+            <div *ngIf="comparison_campaigns_2.value">
+              <h4 style="text-align: center;min-height: 58px;">{{comparison_campaigns_2.value}}</h4>
+              <div class="widget-wrapper">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Impressions"></span>
+                <h4 class="widget-title">Online Impressions</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign2ImpressionsData.value;else zero">{{comparisonCampaign2ImpressionsData.value | shortNumber}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign2ImpressionsData.chart.length;else noData" widgetCategory="comparison" widgetColor="#dc67ab" [widgetData]="comparisonCampaign2ImpressionsData.chart" widgetId="comparison-campaign-2-impressions" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <div class="widget-wrapper" style="margin-top: 10px;">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Spend"></span>
+                <h4 class="widget-title">Online Spend</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign2SpendData.value;else zero">${{comparisonCampaign2SpendData.value | shortNumber}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign2SpendData.chart.length;else noData" widgetCategory="comparison" widgetColor="#dc67ab" [widgetData]="comparisonCampaign2SpendData.chart" widgetId="comparison-campaign-2-spend" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <ng-template #noData>
+                <div [ngClass]=comparisonClasses style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                  <span>Data Not Available</span>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-4">
+            <div *ngIf="comparisonDifferenceImpressionsData.chart.length||comparisonDifferenceSpendData.chart.length">
+              <h4 style="text-align: center;min-height: 58px;">Difference</h4>
+              <div class="widget-wrapper">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Impressions"></span>
+                <h4 class="widget-title">Online Impressions</h4>
+                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 234px;">
+                  <span class="widget-value" *ngIf="comparisonDifferenceImpressionsData.value;else zero">{{comparisonDifferenceImpressionsData.value | shortNumber}}</span>
+                  <ng-template #zero>
+                    <span class="widget-value">0</span>
+                  </ng-template>
+                  <span class="widget-percent-value" *ngIf="comparisonDifferenceImpressionsData.percentageDifference;else zeroPercent">({{(comparisonDifferenceImpressionsData.percentageDifference).toFixed(2)}}%)</span>
+                  <ng-template #zeroPercent>
+                    <span class="widget-percent-value">(0%)</span>
+                  </ng-template>
+                </div>
+                <!-- <app-line-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceImpressionsData.chart" widgetId="comparison-difference-impressions" [classes]=comparisonClasses></app-line-chart> -->
+                <!-- <app-range-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceImpressionsData.chart" widgetId="comparison-difference-impressions" [classes]=comparisonClasses></app-range-chart> -->
+                <!-- <div style="height: 154px;"></div> -->
+              </div>
+              <div class="widget-wrapper" style="margin-top: 10px;">
+                <span class="widget-tooltip" mat-raised-button matTooltip="Spend"></span>
+                <h4 class="widget-title">Online Spend</h4>
+                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 234px;">
+                  <span class="widget-value" *ngIf="comparisonDifferenceSpendData.value;else zero">${{comparisonDifferenceSpendData.value | shortNumber}}</span>
+                  <ng-template #zero>
+                    <span class="widget-value">0</span>
+                  </ng-template>
+                  <span class="widget-percent-value" *ngIf="comparisonDifferenceSpendData.percentageDifference;else zeroPercent">({{(comparisonDifferenceSpendData.percentageDifference).toFixed(2)}}%)</span>
+                  <ng-template #zeroPercent>
+                    <span class="widget-percent-value">(0%)</span>
+                  </ng-template>
+                </div>
+                <!-- <app-line-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceSpendData.chart" widgetId="comparison-difference-spend" [classes]=comparisonClasses></app-line-chart> -->
+                <!-- <app-range-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceSpendData.chart" widgetId="comparison-difference-spend" [classes]=comparisonClasses></app-range-chart> -->
+                <!-- <div style="height: 154px;"></div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12" style="margin-top: 10px;">
+            <div class="row justify-content-center">
+              <div class="col-4">
+                <p>Choose A Metric</p>
+                <mat-form-field appearance="outline">
+                  <mat-select #metric id="mat-select-comparison-metric" [formControl]="comparison_metrics" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+                    <mat-option>(None)</mat-option>
+                    <mat-option *ngFor="let metric of metricList" [value]="metric.value">{{metric.text}}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom:10px">
+          <div class="col-4">
+            <div *ngIf="comparison_campaigns_1.value">
+              <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="(comparison_metrics.value=='CPM' || comparison_metrics.value=='CPVM' || comparison_metrics.value=='In-View Rate' || comparison_metrics.value=='2 Sec Video In-View Rate' || comparison_metrics.value=='In-View Time (Display)' || comparison_metrics.value=='In-View Time (Video)') && comparisonCampaign1MetricData.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign1MetricData.type}}"></span>
+                <h4 class="widget-title">Online {{comparisonCampaign1MetricData.type}}</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign1MetricData.value;else zero">{{(comparison_metrics.value=='CPM' || comparison_metrics.value=='CPVM')?'$':''}}{{comparisonCampaign1MetricData.value | shortNumber}}{{(comparison_metrics.value=='In-View Rate' || comparison_metrics.value=='2 Sec Video In-View Rate')?'%':''}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign1MetricData.chart.length;else noData" widgetCategory="comparison" widgetColor="#67b7dc" [widgetData]="comparisonCampaign1MetricData.chart" widgetId="comparison-campaign-1-metric" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <!-- <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="comparison_metrics.value=='BL' && comparisonCampaign1MetricDataBL.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign1MetricDataBL.type}}"></span>
+                <h4 class="widget-title">{{comparisonCampaign1MetricDataBL.type}}</h4>
+                <mdb-carousel class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Comscore</span>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.comscoreChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-1-metric-comscore-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.comscoreChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign1MetricDataBL.comscoreChart" widgetId="comparison-campaign-1-metric-comscore-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Facebook</span>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.facebookChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-1-metric-facebook-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.facebookChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign1MetricDataBL.facebookChart" widgetId="comparison-campaign-1-metric-facebook-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">YouTube</span>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.youTubeChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-1-metric-youtube-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataBL.youTubeChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign1MetricDataBL.youTubeChart" widgetId="comparison-campaign-1-metric-youtube-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                </mdb-carousel>
+              </div>
+              <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="comparison_metrics.value=='SL' && comparisonCampaign1MetricDataSL.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign1MetricDataSL.type}}"></span>
+                <h4 class="widget-title">{{comparisonCampaign1MetricDataSL.type}}</h4>
+                <mdb-carousel class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Brand ODC</span>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataSL.brandChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-1-metric-brand-sl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataSL.brandChart.length"  widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign1MetricDataSL.brandChart" widgetId="comparison-campaign-1-metric-brand-sl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Product ODC</span>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataSL.prodChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-1-metric-prod-sl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign1MetricDataSL.prodChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign1MetricDataSL.prodChart" widgetId="comparison-campaign-1-metric-prod-sl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                </mdb-carousel>
+              </div> -->
+              <ng-template #noData>
+                <div [ngClass]=comparisonClasses style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                  <span>Data Not Available</span>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-4">
+            <div *ngIf="comparison_campaigns_2.value">
+              <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="(comparison_metrics.value=='CPM' || comparison_metrics.value=='CPVM' || comparison_metrics.value=='In-View Rate' || comparison_metrics.value=='2 Sec Video In-View Rate' || comparison_metrics.value=='In-View Time (Display)' || comparison_metrics.value=='In-View Time (Video)') && comparisonCampaign2MetricData.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign2MetricData.type}}"></span>
+                <h4 class="widget-title">Online {{comparisonCampaign2MetricData.type}}</h4>
+                <span class="widget-value" *ngIf="comparisonCampaign2MetricData.value;else zero">{{(comparison_metrics.value=='CPM' || comparison_metrics.value=='CPVM')?'$':''}}{{comparisonCampaign2MetricData.value | shortNumber}}{{(comparison_metrics.value=='In-View Rate' || comparison_metrics.value=='2 Sec Video In-View Rate')?'%':''}}</span>
+                <ng-template #zero>
+                  <span class="widget-value">0</span>
+                </ng-template>
+                <app-line-chart *ngIf="comparisonCampaign2MetricData.chart.length;else noData" widgetCategory="comparison" widgetColor="#dc67ab" [widgetData]="comparisonCampaign2MetricData.chart" widgetId="comparison-campaign-2-metric" [classes]=comparisonClasses></app-line-chart>
+              </div>
+              <!-- <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="comparison_metrics.value=='BL' && comparisonCampaign2MetricDataBL.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign2MetricDataBL.type}}"></span>
+                <h4 class="widget-title">{{comparisonCampaign2MetricDataBL.type}}</h4>
+                <mdb-carousel class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Comscore</span>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.comscoreChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-2-metric-comscore-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.comscoreChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign2MetricDataBL.comscoreChart" widgetId="comparison-campaign-2-metric-comscore-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Facebook</span>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.facebookChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-2-metric-facebook-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.facebookChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign2MetricDataBL.facebookChart" widgetId="comparison-campaign-2-metric-facebook-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">YouTube</span>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.youTubeChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-2-metric-youtube-bl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataBL.youTubeChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign2MetricDataBL.youTubeChart" widgetId="comparison-campaign-2-metric-youtube-bl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                </mdb-carousel>
+              </div>
+              <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="comparison_metrics.value=='SL' && comparisonCampaign2MetricDataSL.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonCampaign2MetricDataSL.type}}"></span>
+                <h4 class="widget-title">{{comparisonCampaign2MetricDataSL.type}}</h4>
+                <mdb-carousel class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Brand ODC</span>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataSL.brandChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-2-metric-brand-sl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataSL.brandChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign2MetricDataSL.brandChart" widgetId="comparison-campaign-2-metric-brand-sl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                  <mdb-carousel-item>
+                    <span style="text-align: center;">Product ODC</span>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataSL.prodChart.length==0" [widgetData]="[]" widgetId="comparison-campaign-2-metric-prod-sl-nil" class="widget-210"></app-bar-chart>
+                    <app-bar-chart *ngIf="comparisonCampaign2MetricDataSL.prodChart.length" widgetType="%" widgetCategory="comparison" [widgetData]="comparisonCampaign2MetricDataSL.prodChart" widgetId="comparison-campaign-2-metric-prod-sl" class="widget-210-scroll widget-scroll"></app-bar-chart>
+                  </mdb-carousel-item>
+                </mdb-carousel>
+              </div> -->
+              <ng-template #noData>
+                <div [ngClass]=comparisonClasses style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+                  <span>Data Not Available</span>
+                </div>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-4">
+            <div *ngIf="comparisonCampaign1MetricData.chart.length || comparisonCampaign2MetricData.chart.length">
+              <div class="widget-wrapper" style="margin-top: 10px;" *ngIf="comparisonDifferenceMetricData.type">
+                <span class="widget-tooltip" mat-raised-button matTooltip="{{comparisonDifferenceMetricData.type}}"></span>
+                <h4 class="widget-title">Online {{comparisonDifferenceMetricData.type}}</h4>
+                <div style="display: flex;flex-direction: column;justify-content: center;align-items: center;height: 234px;">
+                  <span class="widget-value" *ngIf="comparisonDifferenceMetricData.value;else zero">{{(comparison_metrics.value=='CPM' || comparison_metrics.value=='CPVM')?'$':''}}{{comparisonDifferenceMetricData.value | shortNumber}}{{(comparison_metrics.value=='In-View Rate' || comparison_metrics.value=='2 Sec Video In-View Rate')?'%':''}}</span>
+                  <ng-template #zero>
+                    <span class="widget-value">0</span>
+                  </ng-template>
+                  <span class="widget-percent-value" *ngIf="comparisonDifferenceMetricData.percentageDifference;else zeroPercent">({{(comparisonDifferenceMetricData.percentageDifference).toFixed(2)}}%)</span>
+                  <ng-template #zeroPercent>
+                    <span class="widget-percent-value">(0%)</span>
+                  </ng-template>
+                </div>
+                <!-- <app-line-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceMetricData.chart" widgetId="comparison-difference-metric" [classes]=comparisonClasses></app-line-chart> -->
+                <!-- <app-range-chart widgetCategory="comparison" [widgetData]="comparisonDifferenceMetricData.chart" widgetId="comparison-difference-metric" [classes]=comparisonClasses></app-range-chart> -->
+                <!-- <div style="height: 154px;"></div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>

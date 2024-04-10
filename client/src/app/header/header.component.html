@@ -1,0 +1,20 @@
+<div class="row">
+  <div class="col-4">
+    <h1 class="header-title" style="text-transform: capitalize;">{{ brand }}</h1>
+  </div>
+  <div class="col-8 text-right">
+    <header>
+      <nav>
+        <div class="nav-wrapper row m-0">
+          <div class="col s12 p-0">
+            <ul class="menu">
+              <li *ngFor="let item of links" [ngClass]="{'active': page==item.text}" class="has-sub-menu">
+                <a [routerLink]=[item.link] [queryParams]="{key: item.key}" [ngClass]="{'disabled': item.disabled}">{{ item.text }}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </header>
+  </div>
+</div>

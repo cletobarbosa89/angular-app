@@ -1,0 +1,111 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Brand Health <span style="font-size: 12px;">Cross-Channel Brand Lift</span></h3>
+      </div>
+      <div class="col-4">
+        <!-- <p></p> -->
+        <p>Campaign (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #campaign id="mat-select-brand-health-campaign" [formControl]="brand_health_campaigns" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <mat-select-filter *ngIf="campaign.focused" [array]="campaignListForSearch" [displayMember]="'value'" (filteredReturn)="campaignList=$event"></mat-select-filter>
+            <!-- <mat-option>(None)</mat-option> -->
+            <mat-option *ngFor="let campaign of campaignListForSearch" [value]="campaign.value" [class.hide]="!isFilteredCampaigns(campaign)">{{campaign.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-8">
+        <button class="clear" mat-icon-button color="link" (click)="clearBrandHealthStorage()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <p>Select Comscore Result</p>
+        <mat-selection-list class="comscore-results" #comscoreResultSelected *ngIf="comscoreResultList.length;else nil" (selectionChange)="onSelectionChange($event)" [compareWith]="compare" [formControl]="comscoreResult" [multiple]="false">
+          <mat-list-option *ngFor="let item of comscoreResultList" [value]="item">
+            {{item.text}}
+          </mat-list-option>
+        </mat-selection-list>
+        <ng-template #nil>
+          <button class="nil-result">Select campaign</button>
+        </ng-template>
+      </div>
+      <div class="col-12" style="margin-bottom: 10px;">
+        <span>Campaign Dates:
+          <span *ngIf="!campaignStartDate && !campaignEndDate && !campaignDate" style="font-size:12px;">(Select Campaign)</span>
+          <span *ngIf="!campaignStartDate && !campaignEndDate && campaignDate" style="font-size:12px;">(No dates available)</span>
+          <span *ngIf="campaignStartDate && campaignEndDate && campaignDate" style="font-weight:bold;">({{campaignStartDate}} - {{campaignEndDate}})</span>
+        </span>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-12">
+        <div class="widget-wrapper widget-scroll widget-380-scroll">
+          <h4 class="widget-title">Overall Snapshot</h4>
+          <app-bar-chart *ngIf="brandHealthOverallSnapshotData.chart.length==0" [widgetData]="[]" widgetId="brand-health-overall-snapshot-nil" [classes]=brandHealthOverallSnapshotClasses></app-bar-chart>
+          <div *ngFor="let item of brandHealthOverallSnapshotData.chart; index as i">
+            <app-clustered-chart widgetType="" widgetCategory="brandHealthOverallSnapshot" [widgetData]="item" widgetId="brand-health-overall-snapshot-{{brandHealthOverallSnapshotData.chartIds[i]}}" [classes]=brandHealthOverallSnapshotClasses></app-clustered-chart>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-6">
+        <div class="widget-wrapper widget-scroll widget-380-scroll">
+          <h4 class="widget-title">Purchase Intent by Digital Creatives</h4>
+          <app-bar-chart *ngIf="brandHealthPurchaseIntentByDigitalCreativesData.chart.length==0" [widgetData]="[]" widgetId="brand-health-purchase-intent-by-digital-creatives-nil" [classes]=brandHealthPurchaseIntentClasses></app-bar-chart>
+          <div *ngFor="let item of brandHealthPurchaseIntentByDigitalCreativesData.chart; index as i">
+            <app-column-chart widgetType="" widgetCategory="brandHealthPurchaseIntent" [widgetData]="item" widgetId="brand-health-purchase-intent-by-digital-creatives-{{brandHealthPurchaseIntentByDigitalCreativesData.chartIds[i]}}" [classes]=brandHealthPurchaseIntentClasses></app-column-chart>
+            </div>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="widget-wrapper widget-scroll widget-380-scroll">
+          <h4 class="widget-title">Purchase Intent by TV Creatives</h4>
+          <app-bar-chart *ngIf="brandHealthPurchaseIntentByTvCreativesData.chart.length==0" [widgetData]="[]" widgetId="brand-health-purchase-intent-by-tv-creatives-nil" [classes]=brandHealthPurchaseIntentClasses></app-bar-chart>
+          <div *ngFor="let item of brandHealthPurchaseIntentByTvCreativesData.chart; index as i">
+            <app-column-chart widgetType="" widgetCategory="brandHealthPurchaseIntent" [widgetData]="item" widgetId="brand-health-purchase-intent-by-tv-creatives-{{brandHealthPurchaseIntentByTvCreativesData.chartIds[i]}}" [classes]=brandHealthPurchaseIntentClasses></app-column-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+      <div class="col-6">
+        <div class="widget-wrapper widget-scroll widget-380-scroll">
+          <span class="widget-tooltip widget-tooltip-position" mat-raised-button matTooltip="Facebook Brand Lift"></span>
+          <h4 class="widget-title">Facebook Brand Lift</h4>
+          <app-bar-chart *ngIf="brandHealthFacebookBrandLiftData.chart.length==0" [widgetData]="[]" widgetId="brand-health-facebook-brand-lift-nil" [classes]=brandHealthFacebookBrandLiftClasses></app-bar-chart>
+          <mdb-carousel *ngIf="brandHealthFacebookBrandLiftData.chart.length" class="carousel-custom-control carousel-custom-indicator brand-health-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of brandHealthFacebookBrandLiftData.chart; index as i">
+              <span style="text-align: center;">{{brandHealthFacebookBrandLiftData.cellNames[i]}}</span>
+              <app-bar-chart widgetType="%" widgetCategory="brandHealthBrandLift" [widgetData]="item" widgetId="brand-health-facebook-brand-lift-{{brandHealthFacebookBrandLiftData.chartIds[i]}}" [classes]=brandHealthFacebookBrandLiftClasses class="widget-280-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+      <div class="col-6">
+        <div class="widget-wrapper widget-scroll widget-380-scroll">
+          <span class="widget-tooltip widget-tooltip-position" mat-raised-button matTooltip="YouTube Brand Lift"></span>
+          <h4 class="widget-title">YouTube Brand Lift</h4>
+          <app-bar-chart *ngIf="brandHealthYoutubeBrandLiftData.chart.length==0" [widgetData]="[]" widgetId="brand-health-youtube-brand-lift-nil" [classes]=brandHealthYoutubeBrandLiftClasses></app-bar-chart>
+          <mdb-carousel *ngIf="brandHealthYoutubeBrandLiftData.chart.length" class="carousel-custom-control carousel-custom-indicator brand-health-carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let item of brandHealthYoutubeBrandLiftData.chart; index as i">
+              <span style="text-align: center;" *ngIf="i==0">Targeting</span>
+              <span style="text-align: center;" *ngIf="i==1">Ad Group</span>
+              <app-bar-chart widgetType="%" widgetCategory="brandHealthBrandLift" [widgetData]="item" widgetId="brand-health-youtube-brand-lift-{{brandHealthYoutubeBrandLiftData.chartIds[i]}}" [classes]=brandHealthYoutubeBrandLiftClasses class="widget-280-scroll widget-scroll"></app-bar-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>

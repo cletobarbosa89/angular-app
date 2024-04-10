@@ -1,0 +1,128 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Creative Data Summary</h3>
+      </div>
+      <div class="col-4">
+        <!-- <p></p> -->
+        <p>Campaign (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #campaign id="mat-select-creative-overview-campaign" [formControl]="creative_overview_campaigns" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <mat-select-filter *ngIf="campaign.focused" [array]="campaignListForSearch" [displayMember]="'value'" (filteredReturn)="campaignList=$event"></mat-select-filter>
+            <!-- <mat-option>(None)</mat-option> -->
+            <mat-option *ngFor="let campaign of campaignListForSearch" [value]="campaign.value" [class.hide]="!isFilteredCampaigns(campaign)">{{campaign.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-4">
+        <button class="clear" mat-icon-button color="link" (click)="clearCreativeScoreStorage()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <p>Channel (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #channel id="mat-select-creative-overview-channel" [formControl]="creative_overview_channels" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering>
+            <mat-select-filter *ngIf="channel.focused" [array]="channelListForSearch" [displayMember]="'value'" [noResultsMessage]="'No results'" (filteredReturn)="channelList=$event"></mat-select-filter>
+            <mat-option>(None)</mat-option>
+            <mat-option *ngFor="let channel of channelList" [value]="channel.value">{{channel.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12" style="margin-bottom: 10px;">
+        <span>Campaign Dates:
+          <span *ngIf="!campaignStartDate && !campaignEndDate && !campaignDate" style="font-size:12px;">(Select Campaign)</span>
+          <span *ngIf="!campaignStartDate && !campaignEndDate && campaignDate" style="font-size:12px;">(No dates available)</span>
+          <span *ngIf="campaignStartDate && campaignEndDate && campaignDate" style="font-weight:bold;">({{campaignStartDate}} - {{campaignEndDate}})</span>
+        </span>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <h5>Digital Creative Quality Scores</h5>
+      </div>
+    </div>
+    <div #infiniteScroll infinite-scroll [infiniteScrollDisabled]="this.creativeOverviewDigitalCreativesOnScrollDisabled" [scrollWindow]="false" (scrolled)="onScrollDown($event)" class="row widget-wrapper-creative-scroll widget-scroll" style="margin-bottom: 20px;min-height: 0;">
+      <div *ngIf="creativeOverviewDigitalCreativeScoreData.creatives.length==0" class="widget-wrapper-sl-scroll d-flex flex-column justify-content-center align-items-center" style="width: 100%;">
+        <span *ngIf="creativeOverviewDigitalCreativeScoreData.creatives.length==0&&(!creative_overview_campaigns.value||!creative_overview_channels.value)">Please select Campaign and Channel</span>
+        <span *ngIf="creativeOverviewDigitalCreativeScoreData.creatives.length==0&&creative_overview_campaigns.value&&creative_overview_channels.value">No Data Available</span>
+      </div>
+      <div class="col-4" *ngFor="let creative of creativeOverviewDigitalCreativeScoreData.creatives; index as j" style="margin-top: 10px;">
+        <div class="widget-wrapper-creative">
+          <h6 style="font-size: 14px;text-align: center;min-height: 35px;">{{creative.name}}</h6>
+          <mdb-carousel *ngIf="creative.list.length" class="carousel-custom-indicator-hidden" [animation]="'slide'" [allowSwipe]=true [interval]=0 [noWrap]="true">
+            <mdb-carousel-item *ngFor="let item of creative.list; index as i">
+              <div class="creative-link d-flex flex-column justify-content-center align-items-center">
+                <img *ngIf="!item.assetType" src="{{item.link}}" alt="{{item.name}}" onerror="this.src='../../assets/images/image-not-found.png';">
+                <img *ngIf="item.assetType=='image'" class="image-view" src="{{item.link}}" alt="{{item.name}}" [attr.data-link]="item.link" (click)="openDialogImage($event)" onerror="this.src='../../assets/images/image-not-found.png';">
+                <span *ngIf="item.assetType=='video'" class="video-play" [attr.data-link]="item.link" mat-button (click)="openDialogVideo($event)"></span>
+              </div>
+              <!-- <div *ngIf="!item.link" class="no-creative-link d-flex flex-column justify-content-center align-items-center"></div> -->
+              <!-- <div class="d-flex justify-content-center">
+                <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                  <span style="width: 120px;">Creative Score: </span>
+                  <span class="badge bg-secondary" style="min-width: 45px;">{{item.creativeScore?item.creativeScore+'%':'N/A'}}</span>
+                </span>
+              </div>
+              <div class="d-flex justify-content-center">
+                <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                  <span style="width: 120px;">In View Time: </span>
+                  <span class="badge bg-secondary" style="min-width: 45px;">{{item.inViewTime}}</span>
+                </span>
+              </div>
+              <div class="d-flex justify-content-center">
+                <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                  <span style="width: 120px;">In View Rate: </span>
+                  <span class="badge bg-secondary" style="min-width: 45px;">{{item.inViewRate}}%</span>
+                </span>
+              </div>
+              <div class="d-flex justify-content-center mb-4">
+                <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                  <span style="width: 120px;">Amount Spend: </span>
+                  <span class="badge bg-secondary" style="min-width: 45px;">${{item.amountSpend | shortNumber}}</span>
+                </span>
+              </div> -->
+              <span class="guidelines-view mb-4" [attr.data-id]="j" [attr.data-guidelines]="item.guidelines" [attr.data-creativename]="creative.name" mat-button (click)="openDialogGuidelines($event)" style="text-align:center;cursor:pointer;text-decoration:underline;">Creative Quality Guidelines</span>
+              <!-- <div *ngIf="!item.link" class="no-creative-link d-flex flex-column justify-content-center align-items-center"></div> -->
+            </mdb-carousel-item>
+          </mdb-carousel>
+          <div *ngIf="creative.list.length">
+            <div class="d-flex justify-content-center">
+              <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                <span style="width: 120px;">Creative Score: </span>
+                <span class="badge bg-secondary" style="min-width: 45px;">{{creative.creativeScore?creative.creativeScore+'%':'N/A'}}</span>
+              </span>
+            </div>
+            <div class="d-flex justify-content-center">
+              <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                <span style="width: 120px;">In View Time: </span>
+                <span class="badge bg-secondary" style="min-width: 45px;">{{creative.inViewTime}}</span>
+              </span>
+            </div>
+            <div class="d-flex justify-content-center">
+              <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                <span style="width: 120px;">In View Rate: </span>
+                <span class="badge bg-secondary" style="min-width: 45px;">{{creative.inViewRate}}%</span>
+              </span>
+            </div>
+            <div class="d-flex justify-content-center">
+              <span class="d-flex justify-content-around" style="width: 50%;margin-bottom: 5px;">
+                <span style="width: 120px;">Amount Spend: </span>
+                <span class="badge bg-secondary" style="min-width: 45px;">${{creative.amountSpend | shortNumber}}</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>

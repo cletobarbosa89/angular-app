@@ -1,0 +1,63 @@
+<div class="row">
+  <div class="col">
+    <app-header></app-header>
+  </div>
+</div>
+<div class="row justify-content-center">
+  <div class="col-12">
+    <div class="row">
+      <div class="col-12">
+        <h3>Sales Lift</h3>
+      </div>
+      <div class="col-4">
+        <button class="clear" mat-icon-button color="link" (click)="clearSalesLiftStorage()">
+          <mat-icon>clear</mat-icon>
+        </button>
+        <!-- <p></p> -->
+        <p>Campaign (Mandatory)</p>
+        <mat-form-field appearance="outline">
+          <mat-select #campaign id="mat-select-sales-lift-campaign" [formControl]="sales_lift_campaigns" (selectionChange)="onChange($event)" placeholder="Select" disableOptionCentering multiple>
+            <mat-select-filter *ngIf="campaign.focused" [array]="campaignListForSearch" [displayMember]="'value'" (filteredReturn)="campaignList=$event"></mat-select-filter>
+            <!-- <mat-option>(None)</mat-option> -->
+            <mat-option *ngFor="let campaign of campaignListForSearch" [value]="campaign.value" [class.hide]="!isFilteredCampaigns(campaign)">{{campaign.text}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="col-12" style="margin-bottom: 10px;">
+        <span>Campaign Dates:
+          <span *ngIf="!campaignStartDate && !campaignEndDate && !campaignDate" style="font-size:12px;">(Select Campaign)</span>
+          <span *ngIf="!campaignStartDate && !campaignEndDate && campaignDate" style="font-size:12px;">(No dates available)</span>
+          <span *ngIf="campaignStartDate && campaignEndDate && campaignDate" style="font-weight:bold;">({{campaignStartDate}} - {{campaignEndDate}})</span>
+        </span>
+      </div>
+    </div>
+    <div class="row widget-wrapper-sl-scroll widget-scroll" style="margin-bottom: 20px;">
+      <div *ngIf="salesLiftSlData.chart.length==0" class="widget-wrapper-sl-scroll d-flex flex-column justify-content-center align-items-center" style="width: 100%;">
+        <span *ngIf="salesLiftSlData.chart.length==0">Please select Campaign</span>
+      </div>
+      <div class="col-6" *ngFor="let item of salesLiftSlData.chart; index as i" style="margin-top: 10px;">
+        <div class="widget-wrapper-sl">
+          <h4 class="widget-title">{{salesLiftSlData.chartTitles[i]}}</h4>
+          <mdb-carousel *ngIf="item.length" class="carousel-custom-control carousel-custom-indicator" [animation]="'slide'" [allowSwipe]=true [interval]=0>
+            <mdb-carousel-item *ngFor="let slide of item; index as j">
+              <span style="font-weight: bold;text-align: center;">{{(j%2==0)?'(Brand SL)':'(Product SL)'}}</span>
+              <div class="d-flex justify-content-center" style="position: absolute;right: 0;">
+                <span class="d-flex justify-content-between" style="width: 60%;">
+                  <span style="width: 120px;">ROAS: </span>
+                  <span *ngIf="(j%2==0)" class="badge bg-secondary" style="min-width: 45px;width: 100%;line-height: 18px;font-weight: 900;">{{this.salesLiftSlData.roas[i].brandRoas?'$'+this.salesLiftSlData.roas[i].brandRoas:'$0'}}</span>
+                  <span *ngIf="(j%2!=0)" class="badge bg-secondary" style="min-width: 45px;width: 100%;line-height: 18px;font-weight: 900;">{{this.salesLiftSlData.roas[i].productRoas?'$'+this.salesLiftSlData.roas[i].productRoas:'$0'}}</span>
+                </span>
+              </div>
+              <app-column-chart widgetType="%" widgetCategory="salesLiftSLData" [widgetData]="slide" widgetId="sales-lift-sl-data-{{salesLiftSlData.chartIds[i][j]}}" [classes]=salesLiftSlClasses></app-column-chart>
+            </mdb-carousel-item>
+          </mdb-carousel>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col">
+    <app-footer></app-footer>
+  </div>
+</div>
